@@ -41,6 +41,10 @@ func (rs *DingTalkResource) SendNotification(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
+	for _, alert := range promMessage.Data.Alerts {
+		alert.Labels = alert.Labels.Remove([]string{"count", "instance", "job"})
+	}
+
 	notification, err := notifier.BuildDingTalkNotification(&promMessage)
 	if err != nil {
 		level.Error(logger).Log("msg", "Failed to build notification", "err", err)
